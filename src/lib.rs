@@ -1,6 +1,6 @@
 mod bin_packing;
 
-use bin_packing::bin::{Bin, BinWithPackedOrders, RawBin};
+use bin_packing::bin::{Bin, DLBinWithPackedOrders, RawBin};
 use bin_packing::item::Item;
 use bin_packing::order::{DimensionLessOrder, Order, RawOrder};
 use bin_packing::solver::get_smallest_fitting_bin_for_item_vector;
@@ -59,19 +59,23 @@ pub fn get_smallest_fitting_bin_for_order_list(
     }
 }
 
+/*
+    This function is used to pack max additional DIMENSION-LESS orders into DIMENSION-LESS bins that already have packed orders
+*/
+
 #[wasm_bindgen]
-pub fn pack_max_orders(
-    dimensionless_bins: JsValue,
+pub fn pack_max_dimensionless_orders(
+    dl_bins_with_packed_orders: JsValue,
     additional_orders: JsValue, // must be dimensionless orders
 ) -> Result<JsValue, JsValue> {
     // these bins may have packed orders
-    let mut dimensionless_bins: Vec<BinWithPackedOrders> =
-        serde_wasm_bindgen::from_value(dimensionless_bins)?;
+    let mut dl_bins_with_packed_orders: Vec<DLBinWithPackedOrders> =
+        serde_wasm_bindgen::from_value(dl_bins_with_packed_orders)?;
     let additional_orders: Vec<DimensionLessOrder> =
         serde_wasm_bindgen::from_value(additional_orders)?;
 
     // For each bin, select additional orders to pack
-    for bin in dimensionless_bins.iter_mut() {
+    for bin in dl_bins_with_packed_orders.iter_mut() {
         // Calculate remaining capacities
         let used_weight: f64 = bin.packed_orders.iter().map(|o| o.weight).sum();
         let remaining_weight = bin.max_weight - used_weight;
@@ -112,5 +116,5 @@ pub fn pack_max_orders(
         bin.additional_packed_orders = selected_orders;
     }
 
-    Ok(serde_wasm_bindgen::to_value(&dimensionless_bins)?)
+    Ok(serde_wasm_bindgen::to_value(&dl_bins_with_packed_orders)?)
 }

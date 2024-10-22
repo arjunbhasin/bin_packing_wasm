@@ -64,7 +64,6 @@ impl Order {
 }
 
 // DimensionLessOrder has items with no given dimensions, hence only weight and/or volume is considered
-
 #[derive(Serialize, Deserialize, Clone)]
 pub struct DimensionLessOrder {
     pub id: String,

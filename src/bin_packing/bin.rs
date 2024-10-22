@@ -61,9 +61,9 @@ impl RawBin {
     }
 }
 
-// used only for DimensionLessOrder
+// WARNING: used only for DimensionLessOrder
 #[derive(Serialize, Deserialize)]
-pub struct BinWithPackedOrders {
+pub struct DLBinWithPackedOrders {
     pub id: String,
     pub max_weight: f64,
     pub max_volume: Option<f64>,
