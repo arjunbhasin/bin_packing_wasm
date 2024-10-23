@@ -1,5 +1,4 @@
 mod bin_packing;
-
 use bin_packing::bin::{Bin, DLBinWithPackedOrders, RawBin};
 use bin_packing::item::Item;
 use bin_packing::order::{DimensionLessOrder, Order, RawOrder};
@@ -115,6 +114,8 @@ pub fn pack_max_dimensionless_orders(
         // Assign the selected orders to the bin
         bin.additional_packed_orders = selected_orders;
     }
+    // Remove bins that have no additional orders to pack
+    dl_bins_with_packed_orders.retain(|bin| !bin.additional_packed_orders.is_empty());
 
     Ok(serde_wasm_bindgen::to_value(&dl_bins_with_packed_orders)?)
 }
